@@ -36,7 +36,11 @@ class AlbumModel extends Model
 
     public function updateAlbum(string $albumId, $album)
     {
-        return $this->where('album_id', $albumId)->first()->update($album);
+        $album = $this->where('album_id', $albumId)->update($album);
+
+        if($album) {
+            return $this->getAlbum($albumId);
+        }
     }
 
     public function deleteAlbum(string $albumId)

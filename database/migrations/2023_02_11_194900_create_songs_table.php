@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('songs', function (Blueprint $table) {
-            // $table->id();
-            $table->string('song_id')->unique()->default(uniqid('song_'));
+            $table->id();
+            $table->string('song_id')->unique();
             $table->string('title', 100);
             $table->string('artist', 50);
             $table->integer('length')->default(0);

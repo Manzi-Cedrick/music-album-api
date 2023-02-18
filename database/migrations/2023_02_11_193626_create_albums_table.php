@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('albums', function (Blueprint $table) {
-            // $table->id();
-            $table->string('album_id')->unique()->default(uniqid('album_'));
+            $table->id();
+            $table->string('album_id')->unique();
             $table->string('title', 100);
             $table->string('release_date');
             $table->string('description', 500);

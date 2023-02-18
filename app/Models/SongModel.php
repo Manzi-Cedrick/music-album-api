@@ -20,9 +20,9 @@ class SongModel extends Model
         'album'
     ];
 
-    public function getSong($id)
+    public function getSong($songId)
     {
-        return $this->where('song_id', $id)->first();
+        return $this->where('song_id', $songId)->first();
     }
 
     public function getAllSongs()
@@ -35,13 +35,17 @@ class SongModel extends Model
         return $this->create($song);
     }
 
-    public function updateSong($id, $song)
+    public function updateSong($songId, $song)
     {
-        return $this->where('song_id', $id)->update($song);
+        $song = $this->where('song_id', $songId)->update($song);
+
+        if($song) {
+            return $this->getSong($songId);
+        }
     }
 
-    public function deleteSong($id)
+    public function deleteSong($songId)
     {
-        return $this->where('song_id', $id)->delete();
+        return $this->where('song_id', $songId)->delete();
     }
 }

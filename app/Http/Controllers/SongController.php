@@ -41,7 +41,7 @@ class SongController extends Controller
 
             if(!$song) {
                 return response()->json([
-                    'message' => 'Song not found'
+                    'message' => 'Song with id '. $songId .' not found'
                 ]);
             }
 
@@ -99,28 +99,31 @@ class SongController extends Controller
             $Song = new SongModel();
 
             $request->validate([
-                'title' => 'required|string|max:100',
-                'artist' => 'required|string|max:50',
-                'length' => 'required|integer',
-                'genre' => 'required|string|max:100',
-                'album' => 'required|string|max:100|exists:albums,album_id'
+                'title' => 'string|max:100',
+                'artist' => 'string|max:50',
+                'length' => 'integer',
+                'genre' => 'string|max:100',
+                'album' => 'string|max:100|exists:albums,album_id'
             ]);
 
-            $albumData = [
-                'title' => $request->title,
-                'artist' => $request->artist,
-                'length' => $request->length,
-                'genre' => $request->genre,
-                'album' => $request->album
-            ];
-
-            $song = $Song->updateSong($songId, $albumData);
-
-            if (!$song) {
+            $isAvailable = $Song->getSong($songId);
+            
+            if (!$isAvailable) {
                 return response()->json([
-                    'message' => 'Song not found'
+                    'message' => 'Song with id '. $songId .' not found'
                 ]);
             }
+            
+            $albumData = [
+                'song_id' => $isAvailable['song_id'],
+                'title' => $request->title ? $request->title : $isAvailable['title'],
+                'artist' => $request->artist ? $request->artist : $isAvailable['artist'],
+                'length' => $request->length ? $request->length : $isAvailable['length'],
+                'genre' => $request->genre ? $request->genre : $isAvailable['genre'],
+                'album' => $request->album ? $request->album : $isAvailable['album']
+            ];
+            
+            $song = $Song->updateSong($songId, $albumData);
 
             return response()->json([
                 'message' => 'Song updated successfully',
@@ -139,17 +142,18 @@ class SongController extends Controller
         try {
             $Song = new SongModel();
 
-            $song = $Song->deleteSong($songId);
+            $isAvailable = $Song->getSong($songId);
 
-            if (!$song) {
+            if (!$isAvailable) {
                 return response()->json([
-                    'message' => 'Song not found'
+                    'message' => 'Song with id '. $songId .' not found'
                 ]);
             }
 
+            $Song->deleteSong($songId);
+
             return response()->json([
-                'message' => 'Song deleted successfully',
-                'album' => $song
+                'message' => 'Song deleted successfully'
             ]);
         } catch (\Throwable $th) {
             return response()->json([
