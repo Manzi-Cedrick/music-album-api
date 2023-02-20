@@ -49,5 +49,8 @@ Route::group(['middleware' => CheckAuthentication::class], function () {
     Route::patch('/songs/{id}', [App\Http\Controllers\SongController::class, 'updateSong']);
     Route::delete('/songs/{id}', [App\Http\Controllers\SongController::class, 'deleteSong']);
     
+    Route::get('/songs/genres', [App\Http\Controllers\SongController::class, 'getGenres']);
+    Route::get('/songs/{genre}', [App\Http\Controllers\SongController::class, 'getSongsByGenre']);
+    
     Route::get('/albums/{id}/songs', [App\Http\Controllers\AlbumController::class, 'getAlbumSongs']);
 });

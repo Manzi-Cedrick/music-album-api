@@ -75,7 +75,7 @@ class SongController extends Controller
                 'title' => $request->title,
                 'artist' => $request->artist,
                 'length' => $request->length,
-                'genre' => $request->genre,
+                'genre' => strtolower($request->genre),
                 'album' => $request->album
             ];
             
@@ -119,7 +119,7 @@ class SongController extends Controller
                 'title' => $request->title ? $request->title : $isAvailable['title'],
                 'artist' => $request->artist ? $request->artist : $isAvailable['artist'],
                 'length' => $request->length ? $request->length : $isAvailable['length'],
-                'genre' => $request->genre ? $request->genre : $isAvailable['genre'],
+                'genre' => $request->genre ? strtolower($request->genre) : $isAvailable['genre'],
                 'album' => $request->album ? $request->album : $isAvailable['album']
             ];
             
@@ -158,6 +158,64 @@ class SongController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => 'Error deleting song',
+                'error' => $th->getMessage()
+            ]);
+        }
+    }
+
+    public function getGenres()
+    {
+        try {
+            $Song = new SongModel();
+
+            $genres = $Song->getGenres();
+
+            if($genres->count() <= 0) {
+                return response()->json([
+                    'message' => 'No genres found'
+                ]);
+            }
+
+            return response()->json([
+                'message' => 'Genres retrieved successfully',
+                'genres' => $genres
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Error retrieving genres',
+                'error' => $th->getMessage()
+            ]);
+        }
+    }
+
+    public function getSongsByGenre(string $genre)
+    {
+        try {
+            $Song = new SongModel();
+
+            $isGenreAvailable = $Song->getGenres()->contains('genre', strtolower($genre));
+
+            if(!$isGenreAvailable) {
+                return response()->json([
+                    'message' => 'Genre '. $genre .' not found'
+                ]);
+            }
+
+            $songs = $Song->getSongsByGenre($genre);
+
+            if($songs->count() <= 0) {
+                return response()->json([
+                    'message' => 'No songs found'
+                ]);
+            }
+
+            return response()->json([
+                'message' => 'Songs retrieved successfully',
+                'songs' => $songs
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Error retrieving songs',
                 'error' => $th->getMessage()
             ]);
         }

@@ -48,4 +48,20 @@ class SongModel extends Model
     {
         return $this->where('song_id', $songId)->delete();
     }
+
+    public function getSongsByGenre($genre)
+    {
+        $genres = $this->getGenres();
+
+        if(!in_array($genre, $genres)) {
+            return null;
+        }
+
+        return $this->where('genre', $genre)->get();
+    }
+
+    public function getGenres()
+    {
+        return $this->select('genre')->distinct()->get();
+    }
 }
