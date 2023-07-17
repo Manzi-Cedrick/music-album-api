@@ -50,9 +50,9 @@ class UserModel extends Authenticatable
         return $this->where('user_id', $userId)->first();
     }
 
-    public function getUserByUsername($username)
+    public function getUserByEmail($email)
     {
-        return $this->where('username', $username)->first();
+        return $this->where('email', $email)->first();
     }
 
     public function createUser($user)

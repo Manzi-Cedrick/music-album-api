@@ -183,7 +183,7 @@ class SongController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => 'Error retrieving genres',
-                'error' => $th->getMessage()
+                'error' => $th->getMessage() . 'retrieving genres'
             ]);
         }
     }

@@ -25,20 +25,20 @@ class UserController extends Controller
             }
             
             $request->validate([
-                "username" => "required",
-                "password" => "required"
+                "email" => "required|exists:users|min:3|max:50",
+                "password" => "required|min:6|max:50"
             ]);
 
             $User = new UserModel();
 
-            $userInfo = $User->getUserByUsername($request->username);
+            $userInfo = $User->getUserByEmail($request->email);
 
             if (!$userInfo) {
-                return response()->json(["message" => "Incorrect username or password"], 403);
+                return response()->json(["message" => "Incorrect email or password"], 403);
             } else {
                 if (Hash::check($request->password, $userInfo->password)) {
                     $headers = array('alg' => 'HS256', 'typ' => 'JWT');
-                    $payload = array('id' => $userInfo->user_id, "username" => $userInfo->username, 'exp' => (time() + 1024 * 24 * 60 * 60));
+                    $payload = array('id' => $userInfo->user_id, "email" => $userInfo->email, 'exp' => (time() + 1024 * 24 * 60 * 60));
 
                     $Token = new Token();
                     $token = $Token->generate_jwt($headers, $payload);
